@@ -23,7 +23,10 @@ Then open `http://localhost:4173`.
 
 ```bash
 node tests/forecaster.test.js
+node tests/merge-readiness.test.js
 ```
+
+The merge-readiness check verifies that the static entrypoint still references its assets, the agent council export is present, and no conflict markers remain in tracked app files.
 
 ## Note
 
