@@ -1,444 +1,51 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Autonomous AI Holographic Interface</title>
-    <style>
-      :root {
-        --bg: #050713;
-        --panel: rgba(9, 16, 35, 0.7);
-        --border: rgba(92, 238, 255, 0.45);
-        --text: #e7f9ff;
-        --accent: #3df0ff;
-        --accent-2: #a05dff;
-        --warning: #ff9ecf;
-      }
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mini Me Life Forecaster</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="orb orb-one"></div>
+  <div class="orb orb-two"></div>
+  <main class="app-shell">
+    <section class="hero">
+      <p class="eyebrow">Private • local • instant</p>
+      <h1>Meet the mini you that forecasts your next week.</h1>
+      <p class="lede">Turn mood, energy, commitments, habits, and goals into an agent-powered seven-day operating plan — without sending a single byte off your device.</p>
+      <div class="hero-actions"><a href="#signal-form">Build my forecast</a><span>4 specialist agents • no signup • no cloud</span></div>
+      <div class="agent-marquee" aria-label="AI agent team preview"><span>Strategy Agent</span><span>Wellbeing Agent</span><span>Focus Agent</span><span>Connection Agent</span></div>
+    </section>
 
-      * {
-        box-sizing: border-box;
-      }
+    <section class="workspace" aria-labelledby="input-heading">
+      <form id="signal-form" class="control-panel">
+        <div><p class="eyebrow">Signal journal</p><h2 id="input-heading">Tune your current reality</h2></div>
+        <label>Mood <span id="mood-value">6</span><input name="mood" type="range" min="1" max="10" value="6" /></label>
+        <label>Energy <span id="energy-value">6</span><input name="energy" type="range" min="1" max="10" value="6" /></label>
+        <label>Focus <span id="focus-value">6</span><input name="focus" type="range" min="1" max="10" value="6" /></label>
+        <label>Sleep hours <span id="sleep-value">7</span><input name="sleep" type="range" min="3" max="10" value="7" step="0.5" /></label>
+        <label>Stress <span id="stress-value">4</span><input name="stress" type="range" min="1" max="10" value="4" /></label>
+        <label>Social battery <span id="social-value">6</span><input name="social" type="range" min="1" max="10" value="6" /></label>
+        <label for="commitments">Upcoming commitments<textarea id="commitments" name="commitments" rows="4" placeholder="Project due Thursday, gym 3x, family dinner, job interview"></textarea></label>
+        <label for="goals">Main goals<textarea id="goals" name="goals" rows="3" placeholder="Finish essay, sleep earlier, save money, practice coding"></textarea></label>
+        <label for="habits">Habit anchors<textarea id="habits" name="habits" rows="2" placeholder="Exercise, journal, hydrate, read"></textarea></label>
+        <button type="submit">Forecast my week</button>
+      </form>
 
-      body {
-        margin: 0;
-        font-family: "Inter", "Segoe UI", system-ui, sans-serif;
-        background: radial-gradient(circle at 20% 20%, #132248 0%, #050713 45%, #02030b 100%);
-        color: var(--text);
-        min-height: 100vh;
-        overflow: hidden;
-      }
-
-      #app {
-        display: grid;
-        grid-template-columns: 1.6fr 1fr;
-        width: 100vw;
-        height: 100vh;
-      }
-
-      #scene {
-        position: relative;
-      }
-
-      #scene::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at center, transparent 40%, rgba(4, 7, 16, 0.75));
-        pointer-events: none;
-      }
-
-      .hud {
-        display: flex;
-        flex-direction: column;
-        border-left: 1px solid var(--border);
-        background: linear-gradient(170deg, rgba(11, 18, 40, 0.85), rgba(4, 10, 24, 0.85));
-        backdrop-filter: blur(14px);
-      }
-
-      .hud-header {
-        padding: 1rem 1.2rem 0.65rem;
-        border-bottom: 1px solid rgba(143, 231, 255, 0.25);
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 1.1rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--accent);
-      }
-
-      .status {
-        margin-top: 0.35rem;
-        font-size: 0.8rem;
-        opacity: 0.8;
-      }
-
-      .chat-log {
-        flex: 1;
-        overflow-y: auto;
-        padding: 1rem 1.2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-      }
-
-      .message {
-        padding: 0.75rem 0.9rem;
-        border: 1px solid rgba(121, 213, 255, 0.28);
-        border-radius: 0.7rem;
-        line-height: 1.35;
-        box-shadow: 0 0 0.8rem rgba(60, 150, 255, 0.08);
-      }
-
-      .message.user {
-        align-self: flex-end;
-        border-color: rgba(160, 93, 255, 0.5);
-        background: rgba(89, 39, 153, 0.25);
-      }
-
-      .message.ai {
-        align-self: flex-start;
-        border-color: rgba(61, 240, 255, 0.5);
-        background: rgba(10, 101, 119, 0.25);
-      }
-
-      .message small {
-        display: block;
-        margin-top: 0.25rem;
-        opacity: 0.7;
-      }
-
-      .composer {
-        border-top: 1px solid rgba(143, 231, 255, 0.25);
-        padding: 0.9rem 1.2rem 1.2rem;
-      }
-
-      .composer form {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 0.65rem;
-      }
-
-      input[type="text"] {
-        width: 100%;
-        border: 1px solid rgba(137, 217, 255, 0.35);
-        background: rgba(6, 17, 40, 0.75);
-        color: var(--text);
-        border-radius: 0.6rem;
-        padding: 0.75rem 0.85rem;
-        outline: none;
-      }
-
-      input[type="text"]:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0.9rem rgba(61, 240, 255, 0.35);
-      }
-
-      button {
-        border: 1px solid rgba(61, 240, 255, 0.7);
-        background: linear-gradient(135deg, rgba(24, 146, 173, 0.9), rgba(84, 49, 184, 0.85));
-        color: white;
-        border-radius: 0.6rem;
-        padding: 0.75rem 1rem;
-        cursor: pointer;
-        font-weight: 600;
-      }
-
-      .memory {
-        margin-top: 0.7rem;
-        font-size: 0.75rem;
-        color: var(--warning);
-      }
-
-      @media (max-width: 980px) {
-        #app {
-          grid-template-columns: 1fr;
-          grid-template-rows: 52vh 48vh;
-        }
-
-        .hud {
-          border-left: none;
-          border-top: 1px solid var(--border);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <main id="app">
-      <section id="scene"></section>
-      <aside class="hud">
-        <div class="hud-header">
-          <h1>Autonomous AI Core</h1>
-          <div class="status" id="status">Learning profile: warming up…</div>
-        </div>
-        <div class="chat-log" id="chatLog"></div>
-        <div class="composer">
-          <form id="chatForm">
-            <input id="userInput" type="text" placeholder="Train the AI with your message…" autocomplete="off" required />
-            <button type="submit">Transmit</button>
-          </form>
-          <div class="memory" id="memoryInfo"></div>
-        </div>
+      <aside class="dashboard" aria-live="polite">
+        <div class="mini-you"><div class="avatar">ME</div><div><p class="eyebrow">Persona model</p><h2>Your mini-you</h2></div></div>
+        <p id="persona-summary">Waiting for your data. I will summarize your pattern here.</p>
+        <div class="metrics" id="metrics"></div>
+        <div class="trajectory" id="trajectory" aria-label="Weekly score trajectory"></div>
+        <div class="agent-council" id="agent-council"></div>
+        <div class="recommendations" id="recommendations"></div>
       </aside>
-    </main>
+    </section>
 
-    <script type="module">
-      import * as THREE from "https://unpkg.com/three@0.162.0/build/three.module.js";
-
-      const sceneHost = document.getElementById("scene");
-      const chatLog = document.getElementById("chatLog");
-      const chatForm = document.getElementById("chatForm");
-      const userInput = document.getElementById("userInput");
-      const statusEl = document.getElementById("status");
-      const memoryInfoEl = document.getElementById("memoryInfo");
-
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(sceneHost.clientWidth, sceneHost.clientHeight);
-      sceneHost.appendChild(renderer.domElement);
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(48, sceneHost.clientWidth / sceneHost.clientHeight, 0.1, 100);
-      camera.position.set(0, 1.2, 8.6);
-
-      const ambient = new THREE.AmbientLight(0x88b6ff, 0.85);
-      scene.add(ambient);
-
-      const keyLight = new THREE.PointLight(0x4af3ff, 2.1, 30);
-      keyLight.position.set(6, 5, 4);
-      scene.add(keyLight);
-
-      const backLight = new THREE.PointLight(0x9e6dff, 1.9, 28);
-      backLight.position.set(-6, -3, -4);
-      scene.add(backLight);
-
-      const holoGroup = new THREE.Group();
-      scene.add(holoGroup);
-
-      const shapeConfigs = [
-        { geo: new THREE.IcosahedronGeometry(1.35, 1), pos: [-2.4, 0, 0], color: 0x3df0ff },
-        { geo: new THREE.TorusKnotGeometry(0.85, 0.24, 210, 20), pos: [0, 0.15, 0], color: 0xa05dff },
-        { geo: new THREE.OctahedronGeometry(1.15, 2), pos: [2.4, -0.1, 0], color: 0x71ffe6 }
-      ];
-
-      const holograms = shapeConfigs.map(({ geo, pos, color }, idx) => {
-        const wire = new THREE.LineSegments(
-          new THREE.WireframeGeometry(geo),
-          new THREE.LineBasicMaterial({
-            color,
-            transparent: true,
-            opacity: 0.85
-          })
-        );
-
-        wire.position.set(...pos);
-
-        const shell = new THREE.Mesh(
-          geo,
-          new THREE.MeshPhysicalMaterial({
-            color,
-            emissive: color,
-            emissiveIntensity: 0.24,
-            transparent: true,
-            opacity: 0.14,
-            roughness: 0.04,
-            metalness: 0.18,
-            transmission: 0.94,
-            clearcoat: 1
-          })
-        );
-
-        shell.position.copy(wire.position);
-        shell.scale.multiplyScalar(1.045);
-
-        const pulseRing = new THREE.Mesh(
-          new THREE.TorusGeometry(1.7 + idx * 0.22, 0.018, 12, 92),
-          new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.42 })
-        );
-
-        pulseRing.rotation.x = Math.PI / 2;
-        pulseRing.position.y = -1.55 + idx * 0.16;
-
-        holoGroup.add(wire, shell, pulseRing);
-        return { wire, shell, pulseRing, speed: 0.0035 + idx * 0.0017 };
-      });
-
-      const stars = new THREE.Points(
-        new THREE.BufferGeometry(),
-        new THREE.PointsMaterial({ color: 0x6de7ff, size: 0.045, transparent: true, opacity: 0.8 })
-      );
-
-      const starCount = 950;
-      const starPos = new Float32Array(starCount * 3);
-      for (let i = 0; i < starCount; i++) {
-        starPos[i * 3] = (Math.random() - 0.5) * 34;
-        starPos[i * 3 + 1] = (Math.random() - 0.5) * 22;
-        starPos[i * 3 + 2] = (Math.random() - 0.5) * 30;
-      }
-      stars.geometry.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
-      scene.add(stars);
-
-      const defaultBrain = {
-        memory: {
-          "hello": [
-            "Hello operator. I am syncing your autonomous control layer.",
-            "Greetings. System awareness calibrated and listening."
-          ],
-          "ai": [
-            "My self-learning layer stores useful user patterns to improve future responses.",
-            "I evolve by remembering pairings between your prompts and my generated intent."
-          ],
-          "hologram": [
-            "The geometric cores are live. Their phase velocity is tied to chat intensity.",
-            "Holographic field stable. I can increase rotational complexity if needed."
-          ],
-          "default": [
-            "I have logged this message and adapted my response matrix.",
-            "Interesting input. I am integrating it into long-term behavior memory."
-          ]
-        },
-        interactions: 0,
-        learnedPairs: []
-      };
-
-      let brain = loadBrain();
-      refreshMemoryInfo();
-
-      addMessage("ai", "Autonomous AI initialized. Teach me by chatting; I persist memory locally.");
-
-      chatForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const prompt = userInput.value.trim();
-        if (!prompt) return;
-
-        addMessage("user", prompt);
-        const response = generateResponse(prompt);
-        addMessage("ai", response);
-
-        learnFrom(prompt, response);
-        userInput.value = "";
-      });
-
-      function loadBrain() {
-        try {
-          const cached = localStorage.getItem("autonomous-ai-brain-v1");
-          if (!cached) return structuredClone(defaultBrain);
-          const parsed = JSON.parse(cached);
-          return {
-            memory: { ...defaultBrain.memory, ...(parsed.memory || {}) },
-            interactions: Number(parsed.interactions || 0),
-            learnedPairs: Array.isArray(parsed.learnedPairs) ? parsed.learnedPairs.slice(-120) : []
-          };
-        } catch {
-          return structuredClone(defaultBrain);
-        }
-      }
-
-      function saveBrain() {
-        localStorage.setItem("autonomous-ai-brain-v1", JSON.stringify(brain));
-      }
-
-      function tokenize(text) {
-        return text.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
-      }
-
-      function generateResponse(input) {
-        const terms = tokenize(input);
-        const dynamicResponses = [];
-
-        for (const term of terms) {
-          if (brain.memory[term]) {
-            dynamicResponses.push(...brain.memory[term]);
-          }
-        }
-
-        if (brain.learnedPairs.length) {
-          const related = brain.learnedPairs
-            .filter((pair) => terms.some((term) => pair.inputTokens.includes(term)))
-            .slice(-3)
-            .map((pair) => pair.response);
-          dynamicResponses.push(...related);
-        }
-
-        const fallbacks = brain.memory.default;
-        const source = dynamicResponses.length ? dynamicResponses : fallbacks;
-        const picked = source[Math.floor(Math.random() * source.length)];
-
-        brain.interactions += 1;
-        statusEl.textContent = `Learning profile: ${brain.interactions} interactions processed`;
-        return picked;
-      }
-
-      function learnFrom(input, response) {
-        const tokens = tokenize(input);
-        tokens.forEach((token) => {
-          if (!brain.memory[token]) {
-            brain.memory[token] = [
-              `I have now learned the concept "${token}" from your training data.`
-            ];
-          } else if (brain.memory[token].length < 6) {
-            brain.memory[token].push(`Refined "${token}" context captured at interaction ${brain.interactions}.`);
-          }
-        });
-
-        brain.learnedPairs.push({
-          inputTokens: tokens,
-          response
-        });
-
-        brain.learnedPairs = brain.learnedPairs.slice(-120);
-        saveBrain();
-        refreshMemoryInfo();
-      }
-
-      function refreshMemoryInfo() {
-        const learnedTerms = Object.keys(brain.memory).length;
-        memoryInfoEl.textContent = `${learnedTerms} concepts in memory • ${brain.learnedPairs.length} learned conversational links`;
-      }
-
-      function addMessage(role, content) {
-        const node = document.createElement("article");
-        node.className = `message ${role}`;
-        const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        node.innerHTML = `${content}<small>${role.toUpperCase()} • ${time}</small>`;
-        chatLog.appendChild(node);
-        chatLog.scrollTop = chatLog.scrollHeight;
-      }
-
-      function animate() {
-        requestAnimationFrame(animate);
-        const t = performance.now() * 0.001;
-
-        holograms.forEach(({ wire, shell, pulseRing, speed }, idx) => {
-          wire.rotation.x += speed;
-          wire.rotation.y += speed * (1.2 + idx * 0.2);
-
-          shell.rotation.x -= speed * 0.9;
-          shell.rotation.z += speed * 1.15;
-
-          const pulse = 1 + Math.sin(t * (1.6 + idx * 0.35)) * 0.1;
-          pulseRing.scale.setScalar(pulse);
-          pulseRing.material.opacity = 0.18 + Math.abs(Math.sin(t * 2 + idx)) * 0.36;
-        });
-
-        holoGroup.rotation.y = Math.sin(t * 0.24) * 0.28;
-        holoGroup.position.y = Math.sin(t * 0.8) * 0.2;
-
-        stars.rotation.y += 0.00065;
-        stars.rotation.x = Math.sin(t * 0.1) * 0.1;
-
-        renderer.render(scene, camera);
-      }
-
-      animate();
-
-      window.addEventListener("resize", () => {
-        const { clientWidth, clientHeight } = sceneHost;
-        renderer.setSize(clientWidth, clientHeight);
-        camera.aspect = clientWidth / clientHeight;
-        camera.updateProjectionMatrix();
-      });
-    </script>
-  </body>
+    <section id="forecast" class="forecast" aria-live="polite"></section>
+  </main>
+  <script src="forecaster.js"></script>
+  <script src="app.js"></script>
+</body>
 </html>
